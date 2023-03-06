@@ -1,0 +1,42 @@
+version: "3"
+services:
+  awscli:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        USER_ID: 1000
+        GROUP_ID: 1000
+        USER_NAME: ${USER}
+    container_name: awscli
+    environment:
+      - AWS_PROFILE=${AWS_PROFILE}
+      - AWS_DEFAULT_REGION=us-east-1
+      - SSH_AUTH_SOCK=/ssh-agent-sock
+    networks:
+      - default
+    stdin_open: true
+    tty: true
+    volumes:
+      - ./:/mounted-files
+      - ${HOME}/.aws:/home/${USER}/.aws
+      - ${SSH_AUTH_SOCK}:/ssh-agent-sock
+      - ./logs:/logs
+    working_dir: "/mounted-files"
+  logger:
+    image: amazon/cloudwatch-agent
+    container_name: logger
+    environment:
+      - AWS_PROFILE=AmazonCloudWatchAgent
+      - AWS_REGION=us-east-1
+      - AWS_EC2_METADATA_DISABLED=true
+    volumes:
+      - ./logger/cloudwatch-agent-config.json:/opt/aws/amazon-cloudwatch-agent/bin/default_linux_config.json
+      - ./logger/aws.credentials:/root/.aws/credentials
+      - ./logger/etc:/opt/aws/amazon-cloudwatch-agent/etc
+      - ./logs:/logs
+    networks:
+      - default
+networks:
+  default:
+    driver: "bridge"

@@ -1,0 +1,16 @@
+{
+  "agent": {
+    "run_as_user": "root",
+    "debug": false
+  },
+  "logs": {
+    "log_stream_name": "default",
+    "logs_collected": {
+      "files": {
+        "collect_list": [
+          { "file_path": "/logs/*", "log_group_name": "example_log_group", "log_stream_name": "everything" }
+        ]
+      }
+    }
+  }
+}

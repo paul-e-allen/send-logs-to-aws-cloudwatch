@@ -1,0 +1,6 @@
+logger/etc/*
+!logger/etc/.keep
+logger/aws.credentials
+
+logs/*
+!logs/.keep
